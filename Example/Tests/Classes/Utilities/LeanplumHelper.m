@@ -97,13 +97,18 @@ static BOOL swizzled = NO;
 }
 
 + (BOOL)start_production_test {
+    return [LeanplumHelper start_production_test_with_response_file:@"simple_start_response.json"];
+}
+
++ (BOOL)start_production_test_with_response_file:(NSString *)startResponseFile
+{
     [LeanplumHelper setup_production_test];
     dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
     
     id startStub = [OHHTTPStubs stubRequestsPassingTest:^BOOL(NSURLRequest * _Nonnull request) {
         return [request.URL.host isEqualToString:API_HOST];
     } withStubResponse:^OHHTTPStubsResponse * _Nonnull(NSURLRequest * _Nonnull request) {
-        NSString *response_file = OHPathForFile(@"simple_start_response.json", self.class);
+        NSString *response_file = OHPathForFile(startResponseFile, self.class);
         return [OHHTTPStubsResponse responseWithFileAtPath:response_file statusCode:200
                                                    headers:@{@"Content-Type":@"application/json"}];
     }];

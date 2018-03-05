@@ -201,9 +201,9 @@
          return [OHHTTPStubsResponse responseWithFileAtPath:response_file statusCode:200
                                                     headers:@{@"Content-Type":@"application/json"}];
      }];
-    
+
     XCTAssertTrue([LeanplumHelper start_development_test]);
-    
+
     // Creates a sample file in cache directory for test.
     NSString *cacheDirectory = NSSearchPathForDirectoriesInDomains(NSCachesDirectory,
                                                                    NSUserDomainMask, YES)[0];
@@ -212,7 +212,7 @@
     NSString* filePath = [folderPath stringByAppendingPathComponent:@"sample.file"];
     [test_data writeToFile:filePath
                 atomically:YES];
-    
+
     // Validate request.
     [LeanplumRequest validate_request:^(NSString *method, NSString *apiMethod,
                                         NSDictionary *params){
@@ -221,7 +221,7 @@
         XCTAssertNotNil([params objectForKey:@"data"]);
         return YES;
     }];
-    
+
     [[LeanplumRequest post:LP_METHOD_UPLOAD_FILE
                     params:@{LP_PARAM_DATA: [LPJSON stringFromJSON:[NSMutableArray array]]}]
      sendFilesNow:@[filePath]];
@@ -242,3 +242,4 @@
 }
 
 @end
+

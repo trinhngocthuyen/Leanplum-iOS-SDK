@@ -13,6 +13,7 @@ target 'Leanplum-SDK_Example' do
       pod 'Leanplum-iOS-SDK-source', :path => '../'
       pod 'OCMock', '~> 3.3.1'
       pod 'OHHTTPStubs'
+      pod 'iOSSnapshotTestCase'
   end
 end
 
@@ -20,4 +21,14 @@ target 'Leanplum-tvOS-SDK_Example' do
   platform :tvos, '9.0'
 
   pod 'Leanplum-tvOS-SDK-source', :path => '../'
+end
+
+post_install do |installer|
+    installer.pods_project.targets.each do |target|
+        if target.name == 'iOSSnapshotTestCase'
+            target.build_configurations.each do |config|
+                config.build_settings['SWIFT_VERSION'] = '3.2'
+            end
+        end
+    end
 end

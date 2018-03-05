@@ -1,0 +1,50 @@
+{
+  "response": [{
+    "variants": [],
+    "vars": {
+      "welcomeMessage": "Test Welcome Mess",
+      "showAds": false,
+      "jumpDuration": 1000,
+      "__Resources": {
+        "MainAppIcon\\.png": "MainAppIcon.png"
+      },
+      "mario": "101438745-cat-conjunctivitis-causes.jpg",
+      "varDashTest": "Hello9!!"
+    },
+    "messages": {
+      "6161505856520192": {
+        "action": "Alert",
+        "vars": {
+          "Dismiss text": "Okay",
+          "Message": "Message",
+          "Title": "Title",
+          "__name__": "Alert"
+        },
+        "countdown": 86400,
+        "whenTriggers": {
+          "verb": "OR",
+          "children": [{
+            "subject": "event",
+            "verb": "triggers",
+            "noun": "ShowAlert",
+            "objects": []
+          }]
+        },
+        "parentCampaignId": null,
+        "whenLimits": {
+          "subject": null,
+          "objects": [],
+          "children": []
+        },
+        "hasImpressionCriteria": false,
+        "priority": 1000
+      }
+    },
+    "interfaceRules": [],
+    "interfaceEvents": [],
+    "success": true,
+    "token": "mMaYcKFFQJislU7uldrv067NQ4KMoUsig6l4NZSGOKw",
+    "syncNewsfeed": false,
+    "regions": {}
+  }]
+}

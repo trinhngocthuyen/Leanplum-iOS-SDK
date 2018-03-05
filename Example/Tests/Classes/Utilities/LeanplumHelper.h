@@ -51,6 +51,8 @@ extern NSInteger DISPATCH_WAIT_TIME;
 + (BOOL)start_development_test;
 /// sets up production keys and starts the sdk
 + (BOOL)start_production_test;
+/// sets up production keys and starts the sdk with custom response file
++ (BOOL)start_production_test_with_response_file:(NSString *)startResponseFile;
 
 /// used to reset everything after single test case
 + (void)clean_up;

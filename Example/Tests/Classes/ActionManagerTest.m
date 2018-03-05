@@ -127,7 +127,7 @@
                           withEventName:@"Sick"
                        contextualValues:contextualValues];
     XCTAssertTrue(result.matchedTrigger);
-    
+
     // [Leanplum track:@"Sick" withParameters:nil
     contextualValues.parameters = nil;
     result = [manager shouldShowMessage:@""
@@ -136,7 +136,7 @@
                           withEventName:@"Sick"
                        contextualValues:contextualValues];
     XCTAssertFalse(result.matchedTrigger);
-    
+
     // [Leanplum track:@"NotSick" withParameters:@{@"symptom":@"cough"}]
     contextualValues.parameters = @{@"symptom":@"cough"};
     result = [manager shouldShowMessage:@""
@@ -162,7 +162,15 @@
 - (void)test_notification_action
 {
     id classMock = OCMClassMock([LPUIAlert class]);
-    
+    XCTestExpectation *alertExpectation = [self expectationWithDescription:@"alert"];
+    OCMStub([classMock showWithTitle:OCMOCK_ANY
+                             message:OCMOCK_ANY
+                   cancelButtonTitle:OCMOCK_ANY
+                   otherButtonTitles:OCMOCK_ANY
+                               block:OCMOCK_ANY]).andDo(^(NSInvocation *invocation){
+        [alertExpectation fulfill];
+    });
+
     NSDictionary* userInfo = @{
                                @"_lpm": @"messageId",
                                @"_lpx": @"test_action",
@@ -170,23 +178,27 @@
     [[LPActionManager sharedManager] maybePerformNotificationActions:userInfo
                                                               action:nil
                                                               active:YES];
-    
-    OCMVerify([classMock showWithTitle:OCMOCK_ANY
-                               message:OCMOCK_ANY
-                     cancelButtonTitle:OCMOCK_ANY
-                     otherButtonTitles:OCMOCK_ANY
-                                 block:OCMOCK_ANY]);
+
+    [self waitForExpectationsWithTimeout:1 handler:nil];
 }
 
 - (void) test_receive_notification
 {
+    id classMock = OCMClassMock([LPUIAlert class]);
+    OCMStub([classMock showWithTitle:OCMOCK_ANY
+                             message:OCMOCK_ANY
+                   cancelButtonTitle:OCMOCK_ANY
+                   otherButtonTitles:OCMOCK_ANY
+                               block:OCMOCK_ANY]).andDo(^(NSInvocation *invocation){
+    });
+
     NSDictionary* userInfo = @{
                                @"_lpm": @"messageId",
                                @"_lpx": @"test_action",
                                @"aps" : @{@"alert": @"test"}};
-    
+
     XCTestExpectation* expectation = [self expectationWithDescription:@"notification"];
-    
+
     [[LPActionManager sharedManager] didReceiveRemoteNotification:userInfo
                                                        withAction:@"test_action"
                                            fetchCompletionHandler:
@@ -200,19 +212,19 @@
 {
     NSDictionary *userInfo = nil;
     NSString* messageId = nil;
-    
+
     userInfo = @{@"_lpm": @"messageId"};
     messageId = [LPActionManager messageIdFromUserInfo:userInfo];
     XCTAssertEqual(messageId, @"messageId");
-    
+
     userInfo = @{@"_lpu": @"messageId"};
     messageId = [LPActionManager messageIdFromUserInfo:userInfo];
     XCTAssertEqual(messageId, @"messageId");
-    
+
     userInfo = @{@"_lpn": @"messageId"};
     messageId = [LPActionManager messageIdFromUserInfo:userInfo];
     XCTAssertEqual(messageId, @"messageId");
-    
+
     userInfo = @{@"_lpv": @"messageId"};
     messageId = [LPActionManager messageIdFromUserInfo:userInfo];
     XCTAssertEqual(messageId, @"messageId");
@@ -221,19 +233,19 @@
 - (void)test_push_token
 {
     XCTAssertTrue([LeanplumHelper start_production_test]);
-    
+
     // Partial mock Action Manager.
     LPActionManager *manager = [LPActionManager sharedManager];
     id actionManagerMock = OCMPartialMock(manager);
     OCMStub([actionManagerMock sharedManager]).andReturn(actionManagerMock);
     OCMStub([actionManagerMock respondsToSelector:
              @selector(leanplum_application:didRegisterForRemoteNotificationsWithDeviceToken:)]).andReturn(NO);
-    
+
     // Remove Push Token.
     NSString *pushTokenKey = [Leanplum pushTokenKey];
     [[NSUserDefaults standardUserDefaults] removeObjectForKey:pushTokenKey];
     [[NSUserDefaults standardUserDefaults] synchronize];
-    
+
     // Test push token is sent on clean start.
     UIApplication *app = [UIApplication sharedApplication];
     XCTestExpectation *expectNewToken = [self expectationWithDescription:@"expectNewToken"];
@@ -251,7 +263,7 @@
     }];
     [manager leanplum_application:app didRegisterForRemoteNotificationsWithDeviceToken:token];
     [self waitForExpectationsWithTimeout:2 handler:nil];
-    
+
     // Test push token will not be sent with the same token.
     [LeanplumRequest validate_request:^BOOL(NSString *method, NSString *apiMethod,
                                             NSDictionary *params) {
@@ -259,7 +271,7 @@
         return YES;
     }];
     [manager leanplum_application:app didRegisterForRemoteNotificationsWithDeviceToken:token];
-    
+
     // Test push token is sent if the token changes.
     token = [@"sample2" dataUsingEncoding:NSUTF8StringEncoding];
     formattedToken = [token description];
@@ -279,3 +291,5 @@
 }
 
 @end
+
+

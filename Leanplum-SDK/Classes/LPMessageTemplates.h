@@ -37,6 +37,7 @@
 #endif
 
 + (LPMessageTemplatesClass *)sharedTemplates;
++ (UIViewController *)visibleViewController;
 
 #if LP_NOT_TV
 - (void)disableAskToAsk;

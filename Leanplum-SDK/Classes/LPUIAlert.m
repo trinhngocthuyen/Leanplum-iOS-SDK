@@ -25,6 +25,7 @@
 
 #import "LPUIAlert.h"
 #import "Constants.h"
+#import "LPMessageTemplates.h"
 
 @implementation LPUIAlert
 
@@ -62,9 +63,8 @@
             [alert addAction:action];
         }
 
-        [[UIApplication sharedApplication].keyWindow.rootViewController presentViewController:alert
-                                                                                     animated:YES
-                                                                                   completion:nil];
+        [[LPMessageTemplatesClass visibleViewController]
+         presentViewController:alert animated:YES completion:nil];
     } else
 #endif
     {
